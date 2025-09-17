@@ -1,0 +1,7 @@
+pandas
+numpy
+Flask
+joblib
+mlflow
+kfp
+scikit-learn
