@@ -75,8 +75,8 @@ class ModelTraining:
             logging.error("Error in running model training pipeline")
             raise CustomException(e, sys)
 
-if __name__ == "__main__":
-    model_path = "artifacts/model/"
-    processed_data_dir = 'artifacts/processed/'
-    model_trainer = ModelTraining(model_path, processed_data_dir)
-    model_trainer.run()
+# if __name__ == "__main__":
+#     model_path = "artifacts/model/"
+#     processed_data_dir = 'artifacts/processed/'
+#     model_trainer = ModelTraining(model_path, processed_data_dir)
+#     model_trainer.run()

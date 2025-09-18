@@ -84,6 +84,7 @@ class DataPreProcessing:
             joblib.dump(self.y_train, os.path.join(self.output_path, 'y_train.pkl'))
             joblib.dump(self.x_test, os.path.join(self.output_path, 'x_test.pkl'))
             joblib.dump(self.y_test, os.path.join(self.output_path, 'y_test.pkl'))
+            joblib.dump(self.scaler, os.path.join(self.output_path, 'scaler.pkl'))
             logging.info(f"Artifacts saved successfully in {self.output_path}")
         except Exception as e:
             logging.error("Error saving artifacts")
@@ -101,8 +102,8 @@ class DataPreProcessing:
             logging.error("Error in running data preprocessing pipeline")
             raise CustomException(e, sys)
         
-if __name__ == "__main__":
-    input_path = "artifacts/raw/colorectal_cancer_dataset.csv"
-    output_path = 'artifacts/processed/'
-    data_processor = DataPreProcessing(input_path, output_path)
-    data_processor.run()
+# if __name__ == "__main__":
+#     input_path = "artifacts/raw/colorectal_cancer_dataset.csv"
+#     output_path = 'artifacts/processed/'
+#     data_processor = DataPreProcessing(input_path, output_path)
+#     data_processor.run()
