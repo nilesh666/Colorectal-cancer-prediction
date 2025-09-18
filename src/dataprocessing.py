@@ -34,14 +34,14 @@ class DataPreProcessing:
     def preprocess_data(self):
         try:
             self.data = self.data.drop('Patient_ID', axis=1)
-            self.x = self.data.drop('Survival_Prediction', axis=1)
-            self.y = self.data['Survival_Prediction']
-
-            cat_cols = [i for i in self.x.columns if self.x[i].dtype == 'object']
+            cat_cols = [i for i in self.data.columns if self.data[i].dtype == 'object']
 
             for col in cat_cols:
-                self.x[col] = self.label_encoder.fit_transform(self.x[col])
+                self.data[col] = self.label_encoder.fit_transform(self.data[col])
                 self.mappings[col] = {label: code for label, code in zip(self.label_encoder.classes_, self.label_encoder.transform(self.label_encoder.classes_))}
+
+            self.x = self.data.drop('Survival_Prediction', axis=1)
+            self.y = self.data['Survival_Prediction']
 
             logging.info("Categorical columns encoded successfully")
             logging.info("Data preprocessing completed")
@@ -70,6 +70,7 @@ class DataPreProcessing:
             x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, test_size=0.2, random_state=42, stratify = self.y)
             x_train = self.scaler.fit_transform(x_train)
             x_test = self.scaler.transform(x_test)
+            
 
             logging.info("Data splitting and scaling completed")
             return x_train, x_test, y_train, y_test
@@ -100,8 +101,8 @@ class DataPreProcessing:
             logging.error("Error in running data preprocessing pipeline")
             raise CustomException(e, sys)
         
-# if __name__ == "__main__":
-#     input_path = "artifacts/raw/colorectal_cancer_dataset.csv"
-#     output_path = 'artifacts/processed/'
-#     data_processor = DataPreProcessing(input_path, output_path)
-#     data_processor.run()
+if __name__ == "__main__":
+    input_path = "artifacts/raw/colorectal_cancer_dataset.csv"
+    output_path = 'artifacts/processed/'
+    data_processor = DataPreProcessing(input_path, output_path)
+    data_processor.run()
