@@ -1,13 +1,18 @@
 import os
 import joblib
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.metrics import accuracy_score, classification_report, f1_score, roc_auc_score, recall_score, precision_score
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, recall_score, precision_score
 from utils.custom_exception import CustomException
 import sys
 from utils.logger import logging
+import mlflow
+import mlflow.sklearn
+import dagshub
+
+dagshub.init(repo_owner='nileshnandan.ts', repo_name='Colorectal-cancer-prediction', mlflow=True)
 
 class ModelTraining:
-    def __init__(self, model_path: str, processed_data_dir: str):
+    def __init__(self, model_path: str ="artifacts/model/" , processed_data_dir: str = "artifacts/processed/"):
         self.model_path = model_path
         self.processed_data_dir = processed_data_dir
         os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
@@ -45,13 +50,13 @@ class ModelTraining:
             roc_auc = roc_auc_score(self.y_test, y_proba)
 
             logging.info(f"Model evaluation metrics: Accuracy={accuracy}, Precision={precision}, Recall={recall}, F1-Score={f1}, ROC-AUC={roc_auc}")
-            # return {
-            #     "accuracy": accuracy,
-            #     "precision": precision,
-            #     "recall": recall,
-            #     "f1_score": f1,
-            #     "roc_auc": roc_auc
-            # }
+            return {
+                "accuracy": accuracy,
+                "precision": precision,
+                "recall": recall,
+                "f1_score": f1,
+                "roc_auc": roc_auc
+            }
         except Exception as e:
             logging.error("Error in model evaluation")
             raise CustomException(e, sys)
@@ -66,17 +71,24 @@ class ModelTraining:
     
     def run(self):
         try:
-            self.load_data()
-            model = self.train_model()
-            self.evaluate_model(model)
-            self.save_model(model)
+            with mlflow.start_run():
+                self.load_data()
+                model = self.train_model()
+                d = self.evaluate_model(model)
+                self.save_model(model)
+
+                mlflow.log_artifact(os.path.join(self.model_path, 'model.pkl'), "model.pkl")
+
+                mlflow.log_artifacts(self.processed_data_dir)
+
+                mlflow.log_metrics(d)
+
+                # mlflow.sklearn.log_model(model, "GradientBoostingClassifier_Cancer_Prediction")
             logging.info("Model training pipeline completed successfully")
         except Exception as e:
             logging.error("Error in running model training pipeline")
             raise CustomException(e, sys)
 
-# if __name__ == "__main__":
-#     model_path = "artifacts/model/"
-#     processed_data_dir = 'artifacts/processed/'
-#     model_trainer = ModelTraining(model_path, processed_data_dir)
-#     model_trainer.run()
+if __name__ == "__main__":
+    model_trainer = ModelTraining()
+    model_trainer.run()
