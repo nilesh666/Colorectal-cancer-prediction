@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancer Data Input Form</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Cancer Data Input Form</h2>
+        <form action="/predict" method="POST">
+
+            <!-- Float Inputs -->
+            <label for="healthcare_costs">Healthcare Costs</label>
+            <input type="number" step="0.01" name="healthcare_Costs" id="healthcare_costs" required>
+
+            <label for="tumor_size">Tumor Size (mm)</label>
+            <input type="number" step="0.01" name="tumor_Size_mm" id="tumor_size" required>
+
+            <label for="diabetes">Diabetes</label>
+            <input type="number" step="0.01" name="diabetes" id="diabetes" required>
+
+            <!-- Integer Inputs -->
+            <label for="treatment_type">Treatment Type</label>
+            <input type="number" name="treatment_type" id="treatment_type" required>
+
+            <label for="mortality_rate">Mortality Rate per 100K</label>
+            <input type="number" name="mortality_rate" id="mortality_rate" required>
+
+            <label for="insurance_status">Insurance Status</label>
+            <input type="number" name="insurance_status" id="insurance_status" required>
+
+            <label for="cancer_stage">Cancer Stage</label>
+            <input type="number" name="cancer_stage" id="cancer_stage" required>
+
+            <label for="screening_history">Screening History</label>
+            <input type="number" name="screening_history" id="screening_history" required>
+
+            <!-- Submit -->
+            <button type="submit">Predict</button>
+
+        </form>
+        {% if prediction %}
+            <div class="result">
+                <h3>Prediction: {{ prediction }}</h3>
+            </div>
+         {% endif %}
+    </div>
+</body>
+</html>
